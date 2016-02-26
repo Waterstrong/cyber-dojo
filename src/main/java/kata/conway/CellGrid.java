@@ -19,7 +19,7 @@ public class CellGrid {
         setCellsAliveAt(alivePoints);
     }
 
-    public Cell getCell(Point point) {
+    public Cell getCellAt(Point point) {
         return isWithinEdge(point) ? cells[point.x - 1][point.y - 1] : new Cell(DEAD);
     }
 
@@ -35,4 +35,40 @@ public class CellGrid {
     private boolean isWithinEdge(Point point) {
         return point.x > 0 && point.x <= row && point.y > 0 && point.y <= column;
     }
+
+
+    public int countAliveNeighbourAmount(Point point) {
+        if (!isWithinEdge(point)) {
+            return 0;
+        }
+        for (int ptX = point.x - 1; ptX <= point.x + 1; ++ptX) {
+            for (int ptY = point.y - 1; ptY <= point.y + 1; ++ptY) {
+                Point currPoint = new Point(ptX, ptY);
+                if (isWithinEdge(currPoint) && isNotSelf(point, currPoint) && isCellAlive(currPoint)) {
+                    increaseCellAliveNeighbour(point);
+                }
+            }
+        }
+        return getAliveNeighbourAmount(point);
+    }
+
+    private int getAliveNeighbourAmount(Point point) {
+        return cells[point.x-1][point.y-1].getAliveNeighbourAmount();
+    }
+
+    private void increaseCellAliveNeighbour(Point point) {
+        int x = point.x - 1;
+        int y = point.y - 1;
+        cells[x][y].setAliveNeighbourAmount(cells[x][y].getAliveNeighbourAmount() + 1);
+    }
+
+    private boolean isCellAlive(Point point) {
+        return ALIVE.equals(cells[point.x - 1][point.y - 1].getStatus());
+    }
+
+    private boolean isNotSelf(Point point, Point currPoint) {
+        return point.x != currPoint.x || point.y != currPoint.y;
+    }
+
+
 }
