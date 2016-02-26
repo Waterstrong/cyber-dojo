@@ -16,13 +16,17 @@ public class CellGridTest {
     public void should_be_able_to_init_cell_grid() {
         Point[] alivePoints = new Point[]{new Point(2, 5), new Point(3, 4), new Point(3, 5)};
         CellGrid cellGrid = new CellGrid(4, 8, alivePoints);
+
         stream(alivePoints).forEach(point -> assertThat(cellGrid.getCellAt(point).getStatus(), is(ALIVE)));
+        assertThat(cellGrid.getCellAt(new Point(2, 4)).getAliveNeighbourAmount(), is(3));
+        assertThat(cellGrid.getCellAt(new Point(2, 5)).getAliveNeighbourAmount(), is(2));
     }
 
     @Test
     public void should_get_dead_cell_when_given_off_edge_point() {
         Point[] offEdgePoints = {new Point(0, 0), new Point(-1, 1), new Point(1, -1), new Point(1, 2), new Point(2, 1)};
         CellGrid cellGrid = new CellGrid(1, 1, new Point[]{new Point(1, 1)});
+
         stream(offEdgePoints).forEach(point -> assertThat(cellGrid.getCellAt(point).getStatus(), is(DEAD)));
     }
 
@@ -50,6 +54,17 @@ public class CellGridTest {
         assertThat(cellGrid.countAliveNeighbourAmount(new Point(1, 0)), is(0));
         assertThat(cellGrid.countAliveNeighbourAmount(new Point(-1, -1)), is(0));
         assertThat(cellGrid.countAliveNeighbourAmount(new Point(2, 1)), is(0));
-
     }
+
+    @Test
+    public void should_be_able_to_go_next_generation() {
+        Point[] alivePoints = new Point[]{new Point(2, 5), new Point(3, 4), new Point(3, 5)};
+        CellGrid cellGrid = new CellGrid(4, 8, alivePoints);
+
+        cellGrid.goNextGeneration();
+
+        assertThat(cellGrid.getCellAt(new Point(2, 4)).getStatus(), is(ALIVE));
+        assertThat(cellGrid.getCellAt(new Point(2, 5)).getAliveNeighbourAmount(), is(3));
+    }
+
 }
